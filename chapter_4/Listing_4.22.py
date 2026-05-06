@@ -1,9 +1,13 @@
-os.environ['MISTRAL_API_KEY'] = MISTRAL_API_KEY
-
+import os
 import time
 from time import sleep
 import dspy
 from tqdm import tqdm
+
+from chapter_3.dspy_structures import IntentSignature
+from common.utils import create_examples_from_set, validate_answer
+
+os.environ['MISTRAL_API_KEY'] = ""
 
 lm = dspy.LM("mistral/mistral-tiny")
 dspy.settings.configure(lm=lm)

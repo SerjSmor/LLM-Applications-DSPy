@@ -1,8 +1,14 @@
+import time
+
 from sklearn.metrics import classification_report
 import dspy
+import os
 from dspy.evaluate import Evaluate
 
-os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
+from chapter_3.dspy_structures import IntentSignature
+from common.utils import create_examples_from_set, validate_answer
+
+os.environ['OPENAI_API_KEY'] = ""
 
 lm = dspy.LM("openai/gpt-4o-mini", cache=False)
 dspy.settings.configure(lm=lm)

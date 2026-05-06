@@ -2,7 +2,11 @@ import dspy
 import time
 import os
 
-os.environ['OPENAI_API_KEY'] = OPENAI_API_KEY
+from chapter_3.dspy_structures import IntentSignature
+from chapter_4.Listing_4_5 import dev_set
+from common.utils import validate_answer
+
+os.environ['OPENAI_API_KEY'] = ""
 
 
 def evaluate_baseline(model="openai/gpt-4o-mini", num_threads=10):

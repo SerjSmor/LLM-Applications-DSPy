@@ -1,3 +1,5 @@
+import dspy
+
 test_examples = [
     dspy.Example({
         "message": "I would like to find a flight from charlotte to las vegas that makes at "

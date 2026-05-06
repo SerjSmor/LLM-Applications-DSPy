@@ -1,6 +1,8 @@
 import dspy
 
-turbo = dspy.LM(model='gpt-3.5-turbo')
+from common.consts import unique_intents
+
+turbo = dspy.LM(model='gpt-4o-mini')
 dspy.settings.configure(lm=turbo)
 generator = dspy.Predict("intent -> example_question")
 

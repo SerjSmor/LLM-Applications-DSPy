@@ -12,5 +12,6 @@ test_examples = [
     dspy.Example({
         "message": x[0],
         "labels": unique_intents,
-        "intent_label": x[1]).with_inputs("message", "labels")
-    for x in test_set_simple]
+        "intent_label": x[1]}).with_inputs("message", "labels")
+    for x in test_set_simple
+]

@@ -2,6 +2,10 @@ import time
 import dspy
 from tqdm import tqdm
 
+from chapter_3.dspy_structures import IntentSignature
+from chapter_4.Listing_4_5 import dev_set
+from common.utils import validate_answer
+
 lm = dspy.LM("openai/gpt-4o-mini", cache=False)
 dspy.settings.configure(lm=lm)
 classifier = dspy.Predict(IntentSignature)

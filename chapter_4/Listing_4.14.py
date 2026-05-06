@@ -2,6 +2,11 @@ import time
 from tqdm import tqdm
 import numpy as np
 from openai import OpenAI
+import dspy
+
+from chapter_4.Listing_4_5 import dev_set
+from common.consts import unique_intents
+from common.utils import validate_answer
 
 
 def classify_message_prompt(message: str, system_prompt: str):

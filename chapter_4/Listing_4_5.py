@@ -1,5 +1,7 @@
 import numpy as np
 
+from common.utils import create_examples_from_set
+
 train_val_set = create_examples_from_set('train', n=100)
 np.random.shuffle(train_val_set)
 train_set = train_val_set[:20]

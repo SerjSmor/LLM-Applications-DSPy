@@ -1,6 +1,4 @@
 import dspy
-from dotenv import load_dotenv
-load_dotenv()
 
 dspy.settings.configure(
    lm=dspy.LM("openai/gpt-4o-mini", cache=False),

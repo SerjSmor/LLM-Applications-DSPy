@@ -1,6 +1,8 @@
 import dspy
 from typing import List
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class IntentSignature(dspy.Signature):
     """

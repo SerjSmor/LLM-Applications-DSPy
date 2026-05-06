@@ -17,3 +17,5 @@ dspy.settings.configure(lm=lm)
 classifier = dspy.Predict(MultiIntentSignature)
 prediction = classifier(message=message, labels=labels)
 print(prediction)
+
+

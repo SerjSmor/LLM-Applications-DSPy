@@ -1,21 +1,39 @@
 import dspy
-from dspy import BootstrapFewShot
+from dspy.teleprompt import LabeledFewShot
 
-from chapter_3.dspy_structures import ClosedIntentSignature
-from chapter_4.evaluate_dspy import validate_answer
-from chapter_5.utils import create_examples_from_set
+from chapter_5.Listing_5_1 import intent_classifier, validate_answer
+from chapter_5.Listing_5_2 import train_set, val_set
 
-optimizer = BootstrapFewShot(
-    validate_answer,
-    max_bootstrapped_demos=4,
-    max_labeled_demos=6,
-    max_rounds=10
-)
+best_score = -1
+best_model = None
 
-intent_classifier_cot = dspy.ChainOfThought(ClosedIntentSignature)
-lm = dspy.LM("openai/gpt-4o-mini")
-dspy.settings.configure(lm=lm)
-train_examples = create_examples_from_set("train", 4700)
-bootrstrap_few_shot = optimizer.compile(student=intent_classifier_cot, trainset=train_examples)
-bootrstrap_few_shot(**train_examples[99].inputs())
-lm.inspect_history(n=1)
+for num_examples in range(1, 21):
+    for _ in range(10):
+        labeled_few_shot_optimizer = LabeledFewShot(k=num_examples)
+        few_shot_model = labeled_few_shot_optimizer.compile(student=intent_classifier,
+                                                            trainset=train_set)
+
+        evaluator = dspy.Evaluate(devset=val_set[:50],
+                                  num_threads=5,
+                                  display_progress=False,
+                                  display_table=False,
+                                  provide_traceback=False,
+                                  max_errors=0)
+        results_part1 = evaluator(few_shot_model, metric=validate_answer)
+        if results_part1.score < 80.0:
+            continue
+
+        evaluator = dspy.Evaluate(devset=val_set[50:],
+                                  num_threads=5,
+                                  display_progress=False,
+                                  display_table=False,
+                                  provide_traceback=False,
+                                  max_errors=0)
+
+        results_part2 = evaluator(few_shot_model, metric=validate_answer)
+        results = (results_part1.score + results_part2.score * 5) / 6
+        if results > best_score:
+            best_score = results
+            best_model = few_shot_model
+
+print(best_score)

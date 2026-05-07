@@ -1,27 +1,16 @@
-from sentence_transformers import SentenceTransformer
-import dspy
-from dspy import KNNFewShot
+from dspy import BootstrapFewShot
 
-from chapter_3.dspy_structures import ClosedIntentSignature
-from chapter_5.utils import create_examples_from_set
+from chapter_5.Listing_5_1 import validate_answer, intent_classifier, lm
+from chapter_5.Listing_5_2 import train_set, dev_set
 
-encoder_func = SentenceTransformer("sentence-transformers/all-MiniLM-L12-V2", token=False).encode
-
-
-knn_train_examples = create_examples_from_set('train', 100)
-train_examples = create_examples_from_set('train', 4700)
-lm = dspy.LM("openai/gpt-4o-mini")
-dspy.settings.configure(lm=lm)
-
-knn_optimizer = KNNFewShot(
-    k=3,
-    trainset=knn_train_examples,
-    vectorizer=dspy.Embedder(encoder_func),
-    max_bootstrapped_demos=0,
-    max_labeled_demos=4
+optimizer = BootstrapFewShot(
+    metric=validate_answer,
+    max_bootstrapped_demos=4,
+    max_labeled_demos=6,
+    max_rounds=10
 )
 
-optimized_module = knn_optimizer.compile(dspy.ChainOfThought(ClosedIntentSignature))
-pred = optimized_module(**train_examples[199].with_inputs())
-lm.inspect_history(n=1)
-
+prog_bootrstrap_few_shot = optimizer.compile(student=intent_classifier,
+                                             trainset=train_set)
+prediction = prog_bootrstrap_few_shot(**dev_set[0].inputs())
+print(lm.inspect_history(n=1))

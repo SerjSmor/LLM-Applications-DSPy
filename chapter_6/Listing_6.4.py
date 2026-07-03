@@ -1,21 +1,15 @@
-import dspy
+class BasicGenerateInstruction(Signature):
+    """You are an instruction optimizer for large language models. I will give you a 
+    ``signature`` of fields (inputs and outputs) in English. Your task is to propose an 
+     instruction that will lead a good language model to perform the task well. Don't be 
+     afraid to be creative."""
 
-from chapter_3.dspy_structures import ClosedIntentSignature
-from chapter_4.evaluate_dspy import validate_answer
-from chapter_5.utils import evaluate_model, create_examples_from_set
-
-small_train_set = create_examples_from_set('train', 150)
-dev_set = create_examples_from_set('test', 150)
-
-lm = dspy.LM("openai/gpt-4o-mini")
-dspy.settings.configure(lm=lm)
-model = dspy.Predict(ClosedIntentSignature)
-mipro = dspy.MIPROv2(metric=validate_answer, auto="light")
-optimized_model = mipro.compile(model, trainset=small_train_set, max_bootstrapped_demos=3,
-                                max_labeled_demos=4, valset=dev_set,
-                                requires_permission_to_run=False)
-
-optimized_model(message="How can I list my flight plan?")
-lm.inspect_history()
-# evaluate_model(val_examples, lm, optimized_model)
+    basic_instruction = dspy.InputField(
+        desc="The initial instructions before optimization")
+    proposed_instruction = dspy.OutputField(
+        desc="The improved instructions for the language model")
+    proposed_prefix_for_output_field = dspy.OutputField(
+        desc="The string at the end of the prompt, which will help the model start solving 
+              the task",
+    )
 
